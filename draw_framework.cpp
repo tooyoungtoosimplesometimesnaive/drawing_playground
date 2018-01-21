@@ -131,5 +131,16 @@ int main() {
 	draw_koch_curve();
 	draw_koch_snowflake();
 
+	// Double Folium : (x^2 + y^2)^2 = 4axy^2
+	draw([] (float x, float y) {
+		float a = x * x + y * y;
+		return (a * a - 4.0f * x * y * y) <= 0.0f;
+	}, 1.5f, 1.5f, -1.5f, -1.5f, 0.05f);
+
+	// Pear-shaped quartic
+	draw([] (float x, float y) {
+		return (0.25f * y * y - x * x * x * (1.0f - x)) <= 0.0f;
+	}, 1.5f, 1.5f, -1.5f, -1.5f, 0.05f);
+
 	return 0;
 }
