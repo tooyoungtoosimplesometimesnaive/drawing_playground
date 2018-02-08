@@ -1,35 +1,27 @@
-//! [includes]
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 
 #include <iostream>
 #include <string>
-//! [includes]
 
-//! [namespace]
+#define w 400
+
 using namespace cv;
-//! [namespace]
 
 using namespace std;
 
+
+void random_paint() {
+}
+
 int main( int argc, char** argv )
 {
-    //! [load]
     String imageName( "./ferrari_488.jpg" ); // by default
-    if( argc > 1)
-    {
-        imageName = argv[1];
-    }
-    //! [load]
 
-    //! [mat]
     Mat image;
-    //! [mat]
 
-    //! [imread]
     image = imread( imageName, IMREAD_COLOR ); // Read the file
-    //! [imread]
 
     if( image.empty() )                      // Check for invalid input
     {
@@ -37,16 +29,27 @@ int main( int argc, char** argv )
         return -1;
     }
 
-    //! [window]
     namedWindow( "Display window", WINDOW_AUTOSIZE ); // Create a window for display.
-    //! [window]
 
-    //! [imshow]
     imshow( "Display window", image );                // Show our image inside it.
-    //! [imshow]
 
-    //! [wait]
-    waitKey(0); // Wait for a keystroke in the window
-    //! [wait]
+
+    Mat atom_image = Mat::zeros( w, w, CV_8UC3 );
+    const int channels = atom_image.channels();
+    cout << channels << endl;
+    MatIterator_<Vec3b> it;
+    it = atom_image.begin<Vec3b>();
+
+    it += 800;
+
+    (*it)[0] = 255;
+    (*it)[1] = 255;
+    (*it)[2] = 255;
+
+    it += 1600;
+    
+    (*it)[0] = 255;
+    imshow("test window", atom_image);
+    waitKey(0);
     return 0;
 }
