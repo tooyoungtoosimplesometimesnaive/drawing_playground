@@ -14,3 +14,6 @@ and 0.036% of Others
 
 And this is all randomly generated:
 
+![Atmosphere Image](https://raw.githubusercontent.com/tooyoungtoosimplesometimesnaive/drawing_playground/master/draw_to_files/atmoshpere.jpg "Atmosphere Image")
+
+In which the red dots represents the Oxygen molecules and the white ones represents the Nitrogen molecules.
