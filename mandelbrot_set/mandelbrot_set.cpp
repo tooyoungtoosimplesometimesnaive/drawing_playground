@@ -36,7 +36,7 @@ double smooth_color(pair<c_d, int> p)
 		int i = p.second;
 		double log_z = log(norm(z));
 		double nu = log(log_z) / log(2.0);
-		return i - nu;
+		return i + 1.0 - nu;
 	}
 }
 
@@ -55,6 +55,12 @@ Vec3b color(int i, int Max)
 	int R = (c - B * 65536 - G * 256);
 	return Vec3b(B, G, R);
 }
+Vec3b linear_interpolate(Vec3b color_1, Vec3b color_2, double p)
+{
+	return Vec3b((1.0 - p) * color_1[0] + p * color_2[0],
+		(1.0 - p) * color_1[1] + p * color_2[1],
+		(1.0 - p) * color_1[2] + p * color_2[2]);
+}
 
 Vec3b paint_smooth_color(double i, double Max)
 {
@@ -68,7 +74,12 @@ Vec3b paint_smooth_color(double i, double Max)
 	int R = (c - B * 65536 - G * 256);
 	return Vec3b(B, G, R);
 	*/
-	return vcolor[floor(i) % 16];
+	double i_intpart, i_fractpart;
+	i_fractpart = modf(i, &i_intpart);
+	int i_int = i_intpart;
+	auto color_1 = vcolor[i_int % 16];
+	auto color_2 = vcolor[(i_int + 1) % 16];
+	return linear_interpolate(color_1, color_2, i_fractpart);
 }
 
 int main()
@@ -89,7 +100,9 @@ int main()
 		}
 
 	}
+	imwrite("mandelbrot.jpg", Im);
 	imshow("test window", Im);
+
 	waitKey(0);
 
 	return 0;
