@@ -35,35 +35,52 @@ impl NodeTag {
     }
 }
 
-fn parse(s: &String) -> NodeTag {
-    let mut chars = s.chars();
-    while let Some(c) = chars.next() {
-        if c == ' ' {
-            continue;
+static mut i: usize = 0;
+
+unsafe fn parse(s: &String) -> Option<Box<NodeTag>> {
+    let mut bytes = s.as_bytes();
+    if i >= s.len() {
+        return None;
+    }
+    let c = bytes[i] as char;
+
+    if c == ' ' {
+        i = i + 1;
+        return parse(s);
+    }
+
+    let mut n = NodeTag::new_type(Type::NUM);
+
+    if c.is_digit(10) {
+        println!("is digit! {}", c);
+        if let Some(d) = c.to_digit(10) {
+            n.number = d as f32;
+        } else {
+            panic!("Failed in char to digit!");
+        }
+    } else {
+        match c {
+            '+' => n.t = Type::ADD,
+            '-' => n.t = Type::SUB,
+            '*' => n.t = Type::MUL,
+            '/' => n.t = Type::DIV,
+            _ => n.t = Type::ADD
+        };
+
+        i = i + 1;
+        n.left = parse(s);
+        if n.left.is_none() {
+            return None;
         }
 
-        if c.is_digit(10) {
-            println!("is digit! {}", c);
-            if let Some(d) = c.to_digit(10) {
-                return NodeTag::new(d as f32);
-            } else {
-                panic!("Failed in char to digit!");
-            }
-        } else {
-            let mut n = NodeTag::new_type(Type::ADD);
-            match c {
-                '+' => n.t = Type::ADD,
-                '-' => n.t = Type::SUB,
-                '*' => n.t = Type::MUL,
-                '/' => n.t = Type::DIV,
-                _ => n.t = Type::ADD
-            };
-
-            return n;
+        i = i + 1;
+        n.right = parse(s);
+        if n.right.is_none() {
+            return None;
         }
     }
 
-    return NodeTag::new(1.0);
+    return Some(Box::new(n));
 }
 
 fn main() {
@@ -74,6 +91,9 @@ fn main() {
     }
     println!("{}", args[1]);
     // let expression = &args[1];
-    parse(&args[1]);
+    // i = 0;
+    unsafe {
+        parse(&args[1]);
+    }
 
 }
