@@ -35,18 +35,15 @@ impl NodeTag {
     }
 }
 
-static mut i: usize = 0;
 
-unsafe fn parse(s: &String) -> Option<Box<NodeTag>> {
-    let mut bytes = s.as_bytes();
-    if i >= s.len() {
+fn parse(bytes: &[u8], i: usize) -> Option<Box<NodeTag>> {
+    if i >= bytes.len() {
         return None;
     }
     let c = bytes[i] as char;
 
     if c == ' ' {
-        i = i + 1;
-        return parse(s);
+        return parse(bytes, i + 1);
     }
 
     let mut n = NodeTag::new_type(Type::NUM);
@@ -67,14 +64,12 @@ unsafe fn parse(s: &String) -> Option<Box<NodeTag>> {
             _ => n.t = Type::ADD
         };
 
-        i = i + 1;
-        n.left = parse(s);
+        n.left = parse(bytes, i + 1);
         if n.left.is_none() {
             return None;
         }
 
-        i = i + 1;
-        n.right = parse(s);
+        n.right = parse(bytes, i + 1);
         if n.right.is_none() {
             return None;
         }
@@ -90,10 +85,7 @@ fn main() {
         return
     }
     println!("{}", args[1]);
-    // let expression = &args[1];
-    // i = 0;
-    unsafe {
-        parse(&args[1]);
-    }
+    let bytes = args[1].as_bytes();
+    parse(bytes, 0);
 
 }
