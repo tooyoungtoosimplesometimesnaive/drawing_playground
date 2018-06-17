@@ -41,6 +41,7 @@ fn parse(bytes: &[u8], i: usize) -> Option<Box<NodeTag>> {
         return None;
     }
     let c = bytes[i] as char;
+    println!("the length = {}, char = {}", bytes.len(), c);
 
     if c == ' ' {
         return parse(bytes, i + 1);
@@ -61,7 +62,7 @@ fn parse(bytes: &[u8], i: usize) -> Option<Box<NodeTag>> {
             '-' => n.t = Type::SUB,
             '*' => n.t = Type::MUL,
             '/' => n.t = Type::DIV,
-            _ => n.t = Type::ADD
+            _ => return None
         };
 
         n.left = parse(bytes, i + 1);
@@ -86,6 +87,10 @@ fn main() {
     }
     println!("{}", args[1]);
     let bytes = args[1].as_bytes();
-    parse(bytes, 0);
+    if let Some(root) = parse(bytes, 0) {
+        println!("There is a root!");
+    } else {
+        println!("Invalid input.");
+    }
 
 }
