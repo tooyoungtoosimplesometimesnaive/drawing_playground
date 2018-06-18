@@ -36,15 +36,24 @@ impl NodeTag {
 }
 
 
-fn parse(bytes: &[u8], i: usize) -> Option<Box<NodeTag>> {
-    if i >= bytes.len() {
+fn parse(iter: std::slice::Iter<'a, u8>) -> Option<Box<NodeTag>> {
+    if let Some(c) = iter.next() {
+        println!("hhh the c={}", c as char);
+        return None;
+    } else {
         return None;
     }
-    let c = bytes[i] as char;
+
+    /*
+    println!("in call");
+    if 0 >= bytes.len() {
+        return None;
+    }
+    let c = bytes[0] as char;
     println!("the length = {}, char = {}", bytes.len(), c);
 
     if c == ' ' {
-        return parse(bytes, i + 1);
+        return parse(&mut bytes[1..]);
     }
 
     let mut n = NodeTag::new_type(Type::NUM);
@@ -65,18 +74,19 @@ fn parse(bytes: &[u8], i: usize) -> Option<Box<NodeTag>> {
             _ => return None
         };
 
-        n.left = parse(bytes, i + 1);
+        n.left = parse(&mut bytes[1..]);
         if n.left.is_none() {
             return None;
         }
 
-        n.right = parse(bytes, i + 1);
+        n.right = parse(&mut bytes[1..]);
         if n.right.is_none() {
             return None;
         }
     }
 
     return Some(Box::new(n));
+    */
 }
 
 fn main() {
@@ -86,11 +96,13 @@ fn main() {
         return
     }
     println!("{}", args[1]);
-    let bytes = args[1].as_bytes();
-    if let Some(root) = parse(bytes, 0) {
+    let copied_args = args[1].clone();
+    let mut bytes = copied_args.as_bytes();
+    if let Some(root) = parse(bytes.iter()) {
         println!("There is a root!");
     } else {
         println!("Invalid input.");
     }
 
 }
+
